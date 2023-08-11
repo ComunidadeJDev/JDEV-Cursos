@@ -1,6 +1,6 @@
 const express = require("express");
 const app = express();
-const port = 3000;
+const port = 3001;
 const connection = require("./db/connection");
 const Category = require("./models/Category");
 const Course = require("./models/Course");
@@ -24,5 +24,5 @@ app.use("/", CourseController);
 app.use("/", UserController);
 
 app.listen(port, () => {
-    console.log(`the server is runing in port: ${port}`);
+    console.log(`the server is runing: http://localhost:${port}`);
 });

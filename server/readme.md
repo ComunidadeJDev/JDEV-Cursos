@@ -400,3 +400,29 @@ Motivos: nenhuma categoria encontrado com o id indicado.
 }
 ```
 ---
+### 🔹 DELETE /course/:id
+endpoint responsável por deletar no banco de dados.
+#### Parametros
+id: id referente ao curso desejado.
+### Respostas
+  * **_200_** - ok.
+esse statusCode indica a exclusão do curso.
+```
+{
+    "msg": "course deleted"
+}
+```
+* **_401_** - Falha na autenticação.
+Motivos: Token inválido, Token expirado.
+```
+{
+    "error": "invalid Token"
+}
+```
+* **_400_** - bad request.
+Motivos: id inválido, não numerico, não existente ou nulo.
+```
+{
+    "error": "invalid id"
+}
+```

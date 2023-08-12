@@ -3,7 +3,7 @@ const router = express.Router();
 const Course = require("../models/Course");
 const Category = require("../models/Category");
 const auth = require("../middleware/auth");
-const {Op} = require("sequelize");
+const { Op } = require("sequelize");
 
 router.get("/courses", (req, res) => {
     Course.findAll()
@@ -39,14 +39,23 @@ router.get("/courses/search/:category", (req, res) => {
     const category = req.params.category;
 
     if (!category || isNaN(category)) {
-        res.status(404).json({error: "this category not found."});
+        res.status(400).json({ error: "invalid category id" });
     } else {
-        Course.findAll({where: {categoryId: category}}) 
-            .then(categories => {
-                res.status(200).json(categories);
-            })
-            .catch(err => {
-                res.status(404).json({ error: "an internal error occurred: " + err });
+        Category.findOne({ where: { id: category } })
+            .then(category => {
+                if (!category) {
+                    res.status(404).json({ error: "category not found." });
+                } else {
+                    Course.findAll({ where: { categoryId: category } })
+                        .then(categories => {
+                            res.status(200).json(categories);
+                        })
+                        .catch(err => {
+                            res.status(400).json({ error: "an internal error occurred: " + err });
+                        });
+                }
+            }).catch(err => {
+                res.status(400).json({ error: "an internal error occurred: " + err });
             });
     };
 });
@@ -68,7 +77,7 @@ router.post("/courses", auth, (req, res) => {
         Category.findOne({ where: { id: body.categoryId } })
             .then((category) => {
                 if (!category) {
-                    res.status(404).json({error: "category not found"});
+                    res.status(404).json({ error: "category not found" });
                 } else {
 
                     Course.create({
@@ -90,12 +99,12 @@ router.post("/courses", auth, (req, res) => {
                         categoryName: category.title,
                         categoryId: body.categoryId
                     })
-                    .then((response) => {  
-                        res.status(200).json({ msg: "course created!" });
-                    })
-                    .catch((error) => {
-                        res.status(400).json({ error: "an internal error occurred: " + error });
-                    });
+                        .then((response) => {
+                            res.status(200).json({ msg: "course created!" });
+                        })
+                        .catch((error) => {
+                            res.status(400).json({ error: "an internal error occurred: " + error });
+                        });
                 };
             });
     };
@@ -105,20 +114,20 @@ router.put("/courses", auth, (req, res) => {
     const id = req.body.id;
 
     if (!id || isNaN(id)) {
-        res.status(400).json({error: "invalid id"});
+        res.status(400).json({ error: "invalid id" });
     } else {
-        Course.findOne({where: {id: id}})
+        Course.findOne({ where: { id: id } })
             .then((course) => {
                 if (!course) {
-                    res.status(400).json({error: "course is not found."});
+                    res.status(404).json({ error: "course is not found." });
                 } else {
-                    Category.findOne({where: {id: course.categoryId}})
+                    Category.findOne({ where: { id: course.categoryId } })
                         .then((category) => {
 
                             if (!category) {
-                                res.status(404).json({error: "category is not found."});
+                                res.status(404).json({ error: "category is not found." });
                             } else {
-                                const {body} = req;
+                                const { body } = req;
                                 console.log(category)
 
                                 Course.update({
@@ -139,17 +148,17 @@ router.put("/courses", auth, (req, res) => {
                                     language: body.language,
                                     categoryName: category.title,
                                     categoryId: body.categoryId
-                                }, {where: {id: id}})
-                                        .then(() => {
-                                            res.status(200).json({msg: "course updated"});
-                                        })
-                                        .catch((err) => {
-                                            res.status(400).json({erro: "an internal error occurred 1: " + err });
-                                        });
+                                }, { where: { id: id } })
+                                    .then(() => {
+                                        res.status(200).json({ msg: "course updated" });
+                                    })
+                                    .catch((err) => {
+                                        res.status(400).json({ erro: "an internal error occurred 1: " + err });
+                                    });
                             };
                         })
                         .catch((err) => {
-                            res.status(400).json({erro: "an internal error occurred 2: " + err });
+                            res.status(400).json({ erro: "an internal error occurred 2: " + err });
                         });
                 };
             });
@@ -160,14 +169,14 @@ router.delete("/courses/:id", auth, (req, res) => {
     const id = req.params.id;
 
     if (!id || isNaN(id)) {
-        res.status(400).json({error: "invalid id"});
+        res.status(400).json({ error: "invalid id" });
     } else {
-        Course.destroy({where: {id: id}})
+        Course.destroy({ where: { id: id } })
             .then(() => {
-                res.status(200).json({msg: "course deleted"});
+                res.status(200).json({ msg: "course deleted" });
             })
             .catch((error) => {
-                res.status(400).json({error: "an internal error occurred: " + error });
+                res.status(400).json({ error: "an internal error occurred: " + error });
             });
     };
 });

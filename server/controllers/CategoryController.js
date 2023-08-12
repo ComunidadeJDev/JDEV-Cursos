@@ -42,7 +42,7 @@ router.post("/categories", auth, (req, res) => {
     const title = req.body.title;
 
     if (!title) {
-        res.status(400).json({ error: "invalid name" });
+        res.status(422).json({ error: "invalid name" });
     } else {
         Category.create({
             title: title,
@@ -52,7 +52,7 @@ router.post("/categories", auth, (req, res) => {
                 if (!response) {
                     res.status(400).json({ error: "An error occurred while creating the category" });
                 } else {
-                    res.status(200).json({ msg: "registered category" });
+                    res.status(201).json({ msg: "registered category" });
                 }
             })
             .catch((error) => {
@@ -98,13 +98,23 @@ router.delete("/categories/:id", auth, (req, res) => {
     if (!id || isNaN(id)) {
         res.status(400).json({ error: "an internal error occurred" });
     } else {
-        Category.destroy({ where: { id: id } })
-            .then((response) => {
-                res.status(200).json({ msg: "game deleted" });
-            })
-            .catch((error) => {
-                res.status(404).json(error);
+        Category.findOne({ where: { id: id } })
+            .then(category => {
+                if (!category) {
+                    res.status(404).json({ error: "category is not found" });
+                } else {
+                    Category.destroy({ where: { id: id } })
+                        .then((response) => {
+                            res.status(200).json({ msg: "game deleted" });
+                        })
+                        .catch((error) => {
+                            res.status(404).json(error);
+                        });
+                };
+            }).catch(err => {
+                res.status(400).json({ error: "an internal error occurred" });
             });
+
     };
 });
 

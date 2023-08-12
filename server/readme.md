@@ -131,6 +131,7 @@ O id indicado não pertence a uma categoria.
     "error": "categoty not found"
 }
 ```
+---
 ### 🔹 DELETE /categories/:id
 endpoint responsável por deletar categorias cadastradas no banco de dados.
 #### Parametros

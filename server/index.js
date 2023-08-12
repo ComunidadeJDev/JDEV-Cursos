@@ -24,5 +24,5 @@ app.use("/", CourseController);
 app.use("/", UserController);
 
 app.listen(port, () => {
-    console.log(`the server is runing in port: ${port}`);
+    console.log(`the server is runing: http://localhost:${port}`);
 });

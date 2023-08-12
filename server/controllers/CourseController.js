@@ -39,7 +39,7 @@ router.get("/courses/search/:category", (req, res) => {
     const category = req.params.category;
 
     if (!category || isNaN(category)) {
-        res.status(400).json({error: "this category not found."});
+        res.status(404).json({error: "this category not found."});
     } else {
         Course.findAll({where: {categoryId: category}}) 
             .then(categories => {

@@ -8,6 +8,11 @@ router.get("/categories", (req, res) => {
     let HATEOAS = [
         {
             href: "http://localhost:3000/categories",
+            method: "GET",
+            rel: "get_all_categories"
+        },
+        {
+            href: "http://localhost:3000/categories",
             method: "POST",
             rel: "create_category"
         },

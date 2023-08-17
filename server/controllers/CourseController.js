@@ -6,17 +6,62 @@ const auth = require("../middleware/auth");
 const { Op } = require("sequelize");
 
 router.get("/courses", (req, res) => {
+    let HATEOAS = [
+        {
+            href: "http://localhost:3000/courses",
+            method: "GET",
+            rel: "get_all_courses"
+        },
+        {
+            href: "http://localhost:3000/courses",
+            method: "POST",
+            rel: "create_course"
+        },
+        {
+            href: "http://localhost:3000/login",
+            method: "POST",
+            rel: "login"
+        }
+    ];
+
     Course.findAll()
-        .then((courses) => {
-            res.status(200).json(courses);
-        })
-        .catch((err) => {
+        .then(courses => {
+            res.status(200).json({courses: courses, _links: HATEOAS});
+        }).catch(er => {
             res.status(400).json({ error: err });
         });
 });
 
 router.get("/courses/:id", (req, res) => {
     const id = req.params.id;
+
+    let HATEOAS = [
+        {
+            href: "http://localhost:3000/courses",
+            method: "GET",
+            rel: "get_all_courses"
+        },
+        {
+            href: "http://localhost:3000/courses" + id,
+            method: "GET",
+            rel: "get_course"
+        },
+        {
+            href: "http://localhost:3000/courses",
+            method: "POST",
+            rel: "create_course"
+        },
+        {
+            href: "http://localhost:3000/courses",
+            method: "PUT",
+            rel: "update_course"
+        },
+        {
+            href: "http://localhost:3000/courses/" + id,
+            method: "DELETE",
+            rel: "delete_course"
+        }
+    ];
 
     if (!id || isNaN(id)) {
         res.status(400).json({ error: "id invalid." });
@@ -26,10 +71,9 @@ router.get("/courses/:id", (req, res) => {
                 if (!course) {
                     res.status(404).json({ error: "course not found." });
                 } else {
-                    res.status(200).json(course);
+                    res.status(200).json({course: course, _links: HATEOAS});
                 };
-            })
-            .catch((err) => {
+            }).catch((err) => {
                 res.status(400).json({ error: err });
             });
     };
@@ -37,6 +81,29 @@ router.get("/courses/:id", (req, res) => {
 
 router.get("/courses/search/:category", (req, res) => {
     const category = req.params.category;
+
+    let HATEOAS = [
+        {
+            href: "http://localhost:3000/courses",
+            method: "GET",
+            rel: "get_all_courses"
+        },
+        {
+            href: "http://localhost:3000/courses/search/" + category,
+            method: "GET",
+            rel: "get_course_category"
+        },
+        {
+            href: "http://localhost:3000/courses",
+            method: "POST",
+            rel: "create_course"
+        },
+        {
+            href: "http://localhost:3000/courses",
+            method: "PUT",
+            rel: "update_course"
+        },
+    ];
 
     if (!category || isNaN(category)) {
         res.status(400).json({ error: "invalid category id" });
@@ -48,12 +115,11 @@ router.get("/courses/search/:category", (req, res) => {
                 } else {
                     Course.findAll({ where: { categoryId: category } })
                         .then(categories => {
-                            res.status(200).json(categories);
-                        })
-                        .catch(err => {
+                            res.status(200).json({categories: categories, _links: HATEOAS});
+                        }).catch(err => {
                             res.status(400).json({ error: "an internal error occurred: " + err });
                         });
-                }
+                };
             }).catch(err => {
                 res.status(400).json({ error: "an internal error occurred: " + err });
             });
@@ -66,10 +132,22 @@ router.post("/courses", auth, (req, res) => {
 
     const numbersFields = ["assessments", "amountHours", "downloadableResouces", "amountExercises", "price", "categoryId"];
 
-
     const { body } = req;
     const missingFields = requiredFields.filter(fields => !body[fields]);
     const notNumbers = numbersFields.filter(fields => isNaN(body[fields]));
+
+    let HATEOAS = [
+        {
+            href: "http://localhost:3000/courses",
+            method: "GET",
+            rel: "get_all_courses"
+        },
+        {
+            href: "http://localhost:3000/courses",
+            method: "POST",
+            rel: "create_course"
+        },
+    ];
 
     if (missingFields.length > 1 || notNumbers.length > 1) {
         res.status(400).json({ error: "Missing required fields: " + missingFields.join(", ") + ", " + notNumbers.join(", ") });
@@ -100,7 +178,7 @@ router.post("/courses", auth, (req, res) => {
                         categoryId: body.categoryId
                     })
                         .then((response) => {
-                            res.status(200).json({ msg: "course created!" });
+                            res.status(200).json({ message: "course created!", _links: HATEOAS });
                         })
                         .catch((error) => {
                             res.status(400).json({ error: "an internal error occurred: " + error });
@@ -112,6 +190,34 @@ router.post("/courses", auth, (req, res) => {
 
 router.put("/courses", auth, (req, res) => {
     const id = req.body.id;
+
+    let HATEOAS = [
+        {
+            href: "http://localhost:3000/courses",
+            method: "GET",
+            rel: "get_all_courses"
+        },
+        {
+            href: "http://localhost:3000/courses" + id,
+            method: "GET",
+            rel: "get_course"
+        },
+        {
+            href: "http://localhost:3000/courses",
+            method: "POST",
+            rel: "create_course"
+        },
+        {
+            href: "http://localhost:3000/courses",
+            method: "PUT",
+            rel: "update_course"
+        },
+        {
+            href: "http://localhost:3000/courses/" + id,
+            method: "DELETE",
+            rel: "delete_course"
+        }
+    ];
 
     if (!id || isNaN(id)) {
         res.status(400).json({ error: "invalid id" });
@@ -150,7 +256,7 @@ router.put("/courses", auth, (req, res) => {
                                     categoryId: body.categoryId
                                 }, { where: { id: id } })
                                     .then(() => {
-                                        res.status(200).json({ msg: "course updated" });
+                                        res.status(200).json({ message: "course updated", _links: HATEOAS });
                                     })
                                     .catch((err) => {
                                         res.status(400).json({ erro: "an internal error occurred 1: " + err });
@@ -168,18 +274,30 @@ router.put("/courses", auth, (req, res) => {
 router.delete("/courses/:id", auth, (req, res) => {
     const id = req.params.id;
 
+    let HATEOAS = [
+        {
+            href: "http://localhost:3000/courses",
+            method: "GET",
+            rel: "get_all_courses"
+        },
+        {
+            href: "http://localhost:3000/courses",
+            method: "POST",
+            rel: "create_course"
+        },
+    ];
+
     if (!id || isNaN(id)) {
         res.status(400).json({ error: "invalid id" });
     } else {
         Course.destroy({ where: { id: id } })
             .then(() => {
-                res.status(200).json({ msg: "course deleted" });
+                res.status(200).json({ message: "course deleted", _links: HATEOAS });
             })
             .catch((error) => {
                 res.status(400).json({ error: "an internal error occurred: " + error });
             });
     };
 });
-
 
 module.exports = router;

@@ -1,12 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800&display=swap');
+
 :root {
-  $background-tema-claro: #EFFFFD; 
-  $background-tema-escuro: #132C33;
-  $bg-header-tema-escuro: #126E82; 
-  $bg-header-tema-claro: #42C2FF;
-  $bg-bnt-header-tema-escuro: #51C4D3; 
-  $bg-btn-header-tema-claro: #B8FFF9;
-  $bg-cards-tema-claro: #85F4FF; 
-  $bg-cards-tema-escuro: #126E82;
-  $bg-cards-tags-tema-claro: #B8FFF9;
-  $bg-cards-tags-tema-escuro: #51C4D3; 
+  $bg-color-light: #EFFFFD;
+  $bg-color-dark: #132C33;
+  $bg-color-header-light: #42C2FF;
+  $bg-color-header-dark: #126E82;
+  $bg-color-header-btn-light: #85F4FF; 
+  $bg-color-header-btn-dark: #51C4D3;
+  $bg-color-card-light: #85F4FF;
+  $bg-color-card: #51C4D3;
+  $bg-color-card-fields-light: #85F4FF;
+  $bg-color-card-fields-dark: #51C4D3;
+  $bg-color-search-box-light: #42C2FF;
+  $bg-color-search-box-dark: #126E82;
+  $bg-color-search-field-light: #85F4FF; 
+  $bg-color-search-field-dark: #51C4D3; 
+  $bg-color-filters-light: #85F4FF;
+  $bg-color-filters-dark: #126E82; 
+  $bg-color-filters-btn-light: #B8FFF9;
+  $bg-color-filters-btn-dark: #51C4D3;
 }
